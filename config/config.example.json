@@ -1,0 +1,123 @@
+{    
+    // "logs": {
+    //     "descriptor": {
+    //         "type": "null"
+    //     }
+    // },
+    "logs": {
+        "descriptor": {
+            "type": "console"
+        },
+        "options": {
+            "level": 10
+        }
+    },
+    
+    // "counters": {
+    //     "descriptor": {
+    //         "type": "null"
+    //     }
+    // },
+    "counters": {
+        "descriptor": {
+            "type": "log"
+        },
+        "options": {
+            "timeout": 10000
+        }
+    },
+    
+    "persistence": {
+        "descriptor": {
+            "group": "pip-services-feedbacks",            
+            "type": "mongodb"
+        },
+        "connection": {
+            "uri": "mongodb://localhost/pipservicestest"
+        },
+        "options": {
+            "server": {
+                "poolSize": 4,
+                "socketOptions": {
+                    "keepAlive": 1,
+                    "connectTimeoutMS": 5000
+                },
+                "auto_reconnect": true
+            },
+            "debug": false        
+        }
+    },
+    // "persistence": {
+    //     "descriptor": {
+    //         "group": "pip-services-feedbacks",            
+    //         "type": "file"
+    //     },
+    //     "options": {
+    //         "path": "./feedbacks.json"
+    //     }
+    // },
+
+    "controllers": {
+        "descriptor": {
+            "group": "pip-services-feedbacks"            
+        },
+        "options": {
+            "maxTagCount": 1000
+        }
+    },    
+    
+    "clients": [
+        // {
+        //     "descriptor": {
+        //         "group": "pip-services-storage",            
+        //         "type": "seneca",
+        //         "version": "1.0"
+        //     },
+        //     "endpoint": {
+        //         "type": "tcp",
+        //         "host": "localhost",
+        //         "port": 8810
+        //     }
+        // },
+        {
+            "descriptor": {
+                "group": "pip-services-storage",            
+                "type": "rest",
+                "version": "1.0"
+            },
+            "endpoint": {
+                "type": "http",
+                "host": "localhost",
+                "port": 8010
+            }
+        }
+    ],
+    
+    "services": [
+        {
+            "descriptor": {
+                "group": "pip-services-feedbacks",            
+                "type": "seneca",
+                "version": "1.0"
+            },
+            "endpoint": {
+                "type": "tcp",
+                "host": "localhost",
+                "port": 8812
+            }
+        },
+        {
+            "descriptor": {
+                "group": "pip-services-feedbacks",            
+                "type": "rest",
+                "version": "1.0"
+            },
+            "endpoint": {
+                "type": "http",
+                "host": "localhost",
+                "port": 8012
+            }
+        }
+    ]
+    
+}

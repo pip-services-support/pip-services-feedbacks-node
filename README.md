@@ -6,8 +6,8 @@ When feedbacks are processed by support personnel, user receives a feedback via 
 
 The microservice currently supports the following deployment options:
 * Deployment platforms: Standalone Process, Seneca
-* External APIs: HTTP/REST, Seneca
-* Persistence: Flat Files, MongoDB
+* External APIs: HTTP/REST, Seneca, AWS Lambda
+* Persistence: In-Memory, Flat Files, MongoDB
 
 This microservice has dependencies on the following microservices:
 - [pip-services-storage](https://github.com/pip-services/pip-services-storage) - to reference pictures and documents associates with feedbacks
@@ -21,14 +21,14 @@ This microservice has dependencies on the following microservices:
 * Client SDKs
   - [Node.js SDK](https://github.com/pip-services/pip-clients-feedbacks-node)
 * Communication Protocols
-  - [HTTP/REST Version 1](doc/RestProtocolV1.md)
+  - [HTTP Version 1](doc/HttpProtocolV1.md)
   - [Seneca Version 1](doc/SenecaProtocolV1.md)
 
 ## Download
 
 Right now the only way to get the microservice is to check it out directly from github repository
 ```bash
-git clone git@github.com:pip-services/pip-services-feedbacks.git
+git clone git@github.com:pip-services-support/pip-services-feedbacks-node.git
 ```
 
 Pip.Service team is working to implement packaging and make stable releases available for your 
@@ -36,102 +36,31 @@ as zip downloadable archieves.
 
 ## Run
 
-Add **config.json** file to the root of the microservice folder and set configuration parameters.
-As the starting point you can use example configuration from **config.example.json** file. 
+Add **config.yaml** file to the root of the microservice folder and set configuration parameters.
+As the starting point you can use example configuration from **config.example.yaml** file. 
 
 Example of microservice configuration
-```javascript
-{    
-    "logs": {
-        "descriptor": {
-            "type": "console"
-        },
-        "options": {
-            "level": 10
-        }
-    },
-    
-    "counters": {
-        "descriptor": {
-            "type": "log"
-        },
-        "options": {
-            "timeout": 10000
-        }
-    },
-    
-    "persistence": {
-        "descriptor": {
-            "group": "pip-services-settings",            
-            "type": "mongodb"
-        },
-        "connection": {
-            "uri": "mongodb://localhost/pipservicestest"
-        },
-        "options": {
-            "server": {
-                "poolSize": 4,
-                "socketOptions": {
-                    "keepAlive": 1,
-                    "connectTimeoutMS": 5000
-                },
-                "auto_reconnect": true
-            },
-            "debug": false        
-        }
-    },
+```yaml
+---
+- descriptor: "pip-services-commons:logger:console:default:1.0"
+  level: "trace"
 
-    "controllers": {
-        "descriptor": {
-            "group": "pip-services-feedbacks"            
-        },
-        "options": {
-            "maxTagCount": 1000
-        }
-    },    
-    
-    "clients": [
-        {
-            "descriptor": {
-                "group": "pip-services-storage",            
-                "type": "rest",
-                "version": "1.0"
-            },
-            "endpoint": {
-                "type": "http",
-                "host": "localhost",
-                "port": 8010
-            }
-        }
-    ],
-    
-    "services": [
-        {
-            "descriptor": {
-                "group": "pip-services-feedbacks",            
-                "type": "seneca",
-                "version": "1.0"
-            },
-            "endpoint": {
-                "type": "tcp",
-                "host": "localhost",
-                "port": 8812
-            }
-        },
-        {
-            "descriptor": {
-                "group": "pip-services-feedbacks",            
-                "type": "rest",
-                "version": "1.0"
-            },
-            "endpoint": {
-                "type": "http",
-                "host": "localhost",
-                "port": 8012
-            }
-        }
-    ]
-}
+- descriptor: "pip-services-feedbacks:persistence:file:default:1.0"
+  path: "./data/feedbacks.json"
+
+- descriptor: "pip-services-attachments:client:http:default:1.0"
+  connection:
+    protocol: "http"
+    host: "0.0.0.0"
+    port: 8082
+
+- descriptor: "pip-services-feedbacks:controller:default:default:1.0"
+
+- descriptor: "pip-services-feedbacks:service:http:default:1.0"
+  connection:
+    protocol: "http"
+    host: "0.0.0.0"
+    port: 8080
 ```
  
 For more information on the microservice configuration see [Configuration Guide](Configuration.md).
@@ -160,17 +89,17 @@ If you use Node.js then you should add dependency to the client SDK into **packa
 
 Inside your code get the reference to the client SDK
 ```javascript
-var sdk = new require('pip-clients-feedbacks-node').Version1;
+var sdk = new require('pip-clients-feedbacks-node');
 ```
 
 Define client configuration parameters that match configuration of the microservice external API
 ```javascript
 // Client configuration
 var config = {
-    endpoint: {
+    connection: {
         protocol: 'http',
         host: 'localhost', 
-        port: 8012
+        port: 8080
     }
 };
 ```
@@ -178,10 +107,10 @@ var config = {
 Instantiate the client and open connection to the microservice
 ```javascript
 // Create the client instance
-var client = sdk.FeedbacksRestClient(config);
+var client = sdk.FeedbacksHttpClientV1(config);
 
 // Connect to the microservice
-client.open(function(err) {
+client.open(null, function(err) {
     if (err) {
         console.error('Connection to the microservice failed');
         console.error(err);
@@ -196,7 +125,7 @@ client.open(function(err) {
 Now the client is ready to perform operations
 ```javascript
 // Send feedback to support
-client.createFeedback(
+client.sendFeedback(
     null,
     {
         category: 'support',

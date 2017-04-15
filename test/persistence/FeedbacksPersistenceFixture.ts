@@ -1,60 +1,69 @@
+let _ = require
 let async = require('async');
 let assert = require('chai').assert;
 
-import { FilterParams } from 'pip-services-runtime-node';
-import { PagingParams } from 'pip-services-runtime-node';
+import { FilterParams } from 'pip-services-commons-node';
+import { PagingParams } from 'pip-services-commons-node';
+import { AnyValueMap } from 'pip-services-commons-node';
 
+import { PartyReferenceV1 } from '../../src/data/version1/PartyReferenceV1';
+import { FeedbackV1 } from '../../src/data/version1/FeedbackV1';
 import { IFeedbacksPersistence } from '../../src/persistence/IFeedbacksPersistence';
 
-let FEEDBACK = {
-    // sender_id: '1',
-    // sender_email: 'test@digitallivingsoftware.com',
-    // sender_name: 'Test User',
-    category: 'general',
-    title: 'Test',
-    content: 'This is just a test'
-};
-let USER1 = {
+let USER1 = <PartyReferenceV1>{
     id: '1',
     name: 'Test User',
     email: 'test@digitallivingsoftware.com'
 };
-let USER2 = {
+let USER2 = <PartyReferenceV1>{
     id: '2',
     name: 'Admin User',
     email: 'admin@digitallivingsoftware.com'
 };
+let FEEDBACK1 = <FeedbackV1>{
+    category: 'general',
+    title: 'Test',
+    content: 'This is just a test',
+    sent_time: new Date(),
+    sender: USER1
+};
+let FEEDBACK2 = <FeedbackV1>{
+    category: 'general',
+    title: 'Test',
+    content: 'This is just a test',
+    sent_time: new Date(),
+    sender: USER2
+};
 
 export class FeedbacksPersistenceFixture {
-    private _db: IFeedbacksPersistence;
+    private _persistence: IFeedbacksPersistence;
     
-    constructor(db) {
-        assert.isNotNull(db);
-        this._db = db;
+    constructor(persistence: IFeedbacksPersistence) {
+        assert.isNotNull(persistence);
+        this._persistence = persistence;
     }
 
-    testSendFeedback(done) {
+    public testSendFeedback(done) {
         let feedback1;
         
         async.series([
         // Request a Feedback
             (callback) => {
-                this._db.sendFeedback(
+                this._persistence.create(
                     null,
-                    FEEDBACK,
-                    USER1,
+                    FEEDBACK1,
                     (err, feedback) => {
                         assert.isNull(err);
                         
                         assert.isObject(feedback);
-                        assert.equal(feedback.category, FEEDBACK.category);
-                        assert.equal(feedback.title, FEEDBACK.title);
-                        assert.equal(feedback.content, FEEDBACK.content);
+                        assert.equal(feedback.category, FEEDBACK1.category);
+                        assert.equal(feedback.title, FEEDBACK1.title);
+                        assert.equal(feedback.content, FEEDBACK1.content);
                         assert.equal(feedback.sender.id, USER1.id);
                         assert.equal(feedback.sender.name, USER1.name);
                         assert.equal(feedback.sender.email, USER1.email);
-                        assert.isDefined(feedback.sent);
-                        assert.isUndefined(feedback.replied);
+                        assert.isDefined(feedback.sent_time);
+                        assert.isUndefined(feedback.reply_time);;
                         
                         feedback1 = feedback;
 
@@ -64,21 +73,21 @@ export class FeedbacksPersistenceFixture {
             },
         // Check that feedback was written
             (callback) => {
-                this._db.getFeedbackById(
+                this._persistence.getOneById(
                     null,
                     feedback1.id,
                     (err, feedback) => {
                         assert.isNull(err);
                         
                         assert.isObject(feedback);
-                        assert.equal(feedback.category, FEEDBACK.category);
-                        assert.equal(feedback.title, FEEDBACK.title);
-                        assert.equal(feedback.content, FEEDBACK.content);
+                        assert.equal(feedback.category, FEEDBACK1.category);
+                        assert.equal(feedback.title, FEEDBACK1.title);
+                        assert.equal(feedback.content, FEEDBACK1.content);
                         assert.equal(feedback.sender.id, USER1.id);
                         assert.equal(feedback.sender.name, USER1.name);
                         assert.equal(feedback.sender.email, USER1.email);
-                        assert.isDefined(feedback.sent);
-                        assert.isUndefined(feedback.replied);
+                        assert.isDefined(feedback.sent_time);
+                        assert.isUndefined(feedback.reply_time);
 
                         callback();
                     });
@@ -86,16 +95,15 @@ export class FeedbacksPersistenceFixture {
         ], done);
     }
 
-    testReplyFeedback(done) {
+    public testReplyFeedback(done) {
         let feedback1;
         
         async.series([
         // Request a Feedback
             (callback) => {
-                this._db.sendFeedback(
+                this._persistence.create(
                     null,
-                    FEEDBACK, 
-                    USER1,
+                    FEEDBACK1, 
                     (err, feedback) => {
                         assert.isNull(err);
                         
@@ -108,17 +116,20 @@ export class FeedbacksPersistenceFixture {
             },
         // Reply a Feedback
             (callback) => {
-                this._db.replyFeedback(
+                this._persistence.updatePartially(
                     null,
-                    feedback1.id, 
-                    'This is a test reply',
-                    USER2,
+                    feedback1.id,
+                    AnyValueMap.fromTuples(
+                        'reply', 'This is a test reply',
+                        'replier', USER2,
+                        'reply_time', new Date()
+                    ),
                     (err, feedback) => {
                         assert.isNull(err);
                         
                         assert.isObject(feedback);
                         assert.equal(feedback.reply, 'This is a test reply')
-                        assert.isDefined(feedback.replied);
+                        assert.isDefined(feedback.reply_time);
 
                         feedback1 = feedback;
 
@@ -128,7 +139,7 @@ export class FeedbacksPersistenceFixture {
             },
         // Check that reply was written
             (callback) => {
-                this._db.getFeedbackById(
+                this._persistence.getOneById(
                     null,
                     feedback1.id,
                     (err, feedback) => {
@@ -137,9 +148,9 @@ export class FeedbacksPersistenceFixture {
                         assert.isObject(feedback);
                         assert.equal(feedback.sender.name, USER1.name);
                         assert.equal(feedback.sender.email, USER1.email);
-                        assert.equal(feedback.category, FEEDBACK.category);
+                        assert.equal(feedback.category, FEEDBACK1.category);
 
-                        assert.isDefined(feedback.replied);
+                        assert.isDefined(feedback.reply_time);
                         assert.equal(feedback.replier.id, USER2.id);
                         assert.equal(feedback.replier.name, USER2.name);
                         assert.equal(feedback.replier.email, USER2.email);
@@ -152,16 +163,15 @@ export class FeedbacksPersistenceFixture {
         ], done);
     }
 
-    testGetFeedback(done) {
+    public testGetFeedback(done) {
         let feedback1;
         
         async.series([
         // Request a Feedback
             (callback) => {
-                this._db.sendFeedback(
+                this._persistence.create(
                     null,
-                    FEEDBACK,
-                    USER1,
+                    FEEDBACK1,
                     (err, feedback) => {
                         assert.isNull(err);
                         
@@ -174,7 +184,7 @@ export class FeedbacksPersistenceFixture {
             },
         // Get a Feedback
             (callback) => {
-                this._db.getFeedbackById(
+                this._persistence.getOneById(
                     null,
                     feedback1.id, 
                     (err, feedback) => {
@@ -184,7 +194,7 @@ export class FeedbacksPersistenceFixture {
                         assert.equal(feedback.id, feedback1.id);
                         assert.equal(feedback.sender.name, USER1.name);
                         assert.equal(feedback.sender.email, USER1.email);
-                        assert.equal(feedback.category, FEEDBACK.category);
+                        assert.equal(feedback.category, FEEDBACK1.category);
 
                         callback();
                     }
@@ -193,16 +203,15 @@ export class FeedbacksPersistenceFixture {
         ], done);
     }
 
-    testGetMultipleFeedbacks(done) {
+    public testGetMultipleFeedbacks(done) {
         let feedback1, feedback2, feedback3;
         
         async.series([
         // Send feedback #1
             (callback) => {
-                this._db.sendFeedback(
+                this._persistence.create(
                     null,
-                    FEEDBACK,
-                    USER1,
+                    FEEDBACK1,
                     (err, feedback) => {
                         assert.isNull(err);
                         
@@ -215,10 +224,9 @@ export class FeedbacksPersistenceFixture {
             },
         // Send feedback #2
             (callback) => {
-                this._db.sendFeedback(
+                this._persistence.create(
                     null,
-                    FEEDBACK,
-                    USER1,
+                    FEEDBACK1,
                     (err, feedback) => {
                         assert.isNull(err);
                         
@@ -231,10 +239,9 @@ export class FeedbacksPersistenceFixture {
             },
         // Send feedback #3
             (callback) => {
-                this._db.sendFeedback(
+                this._persistence.create(
                     null,
-                    FEEDBACK,
-                    USER2,
+                    FEEDBACK2,
                     (err, feedback) => {
                         assert.isNull(err);
                         
@@ -247,11 +254,14 @@ export class FeedbacksPersistenceFixture {
             },
         // Reply a feedback
             (callback) => {
-                this._db.replyFeedback(
+                this._persistence.updatePartially(
                     null,
                     feedback1.id,
-                    'This is a reply',
-                    USER2, 
+                    AnyValueMap.fromTuples(
+                        'reply', 'This is a reply',
+                        'replier', USER2,
+                        'reply_time', new Date()
+                    ), 
                     (err, feedback) => {
                         assert.isNull(err);
                         
@@ -264,7 +274,7 @@ export class FeedbacksPersistenceFixture {
             },
         // Get feedback
             (callback) => {
-                this._db.getFeedbacks(
+                this._persistence.getPageByFilter(
                     null,
                     FilterParams.fromValue({ replied: false }),
                     new PagingParams(), 
@@ -275,8 +285,8 @@ export class FeedbacksPersistenceFixture {
                         assert.lengthOf(feedbacks.data, 2);
 
                         let feedback = feedbacks.data[0];
-                        assert.isUndefined(feedback.replied);
-                        assert.equal(feedback.category, FEEDBACK.category);
+                        assert.isUndefined(feedback.reply_time);
+                        assert.equal(feedback.category, FEEDBACK1.category);
 
                         callback(null);
                     }
@@ -285,16 +295,15 @@ export class FeedbacksPersistenceFixture {
         ], done);
     }
 
-    testDeleteFeedback(done) {
+    public testDeleteFeedback(done) {
         let feedback1;
         
         async.series([
         // Request feedback
             (callback) => {
-                 this._db.sendFeedback(
+                 this._persistence.create(
                      null,
-                     FEEDBACK,
-                     USER1,
+                     FEEDBACK1,
                     (err, feedback) => {
                         assert.isNull(err);
                         
@@ -307,7 +316,7 @@ export class FeedbacksPersistenceFixture {
            },
         // Get feedback
             (callback) => {
-                this._db.getFeedbackById(
+                this._persistence.getOneById(
                     null,
                     feedback1.id, 
                     (err, feedback) => {
@@ -321,7 +330,7 @@ export class FeedbacksPersistenceFixture {
             },
         // Delete feedback
             (callback) => {
-                this._db.deleteFeedback(
+                this._persistence.deleteById(
                     null,
                     feedback1.id, 
                     (err) => {
@@ -333,7 +342,7 @@ export class FeedbacksPersistenceFixture {
             },
         // Get nothing
             (callback) => {
-                this._db.getFeedbackById(
+                this._persistence.getOneById(
                     null,
                     feedback1.id, 
                     (err, feedback) => {

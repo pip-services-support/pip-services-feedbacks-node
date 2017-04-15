@@ -1,196 +1,105 @@
 let _ = require('lodash');
-let async = require('async');
 
-import { Category } from 'pip-services-runtime-node';
-import { ComponentDescriptor } from 'pip-services-runtime-node';
-import { ComponentSet } from 'pip-services-runtime-node';
-import { FilterParams } from 'pip-services-runtime-node';
-import { PagingParams } from 'pip-services-runtime-node';
-import { MongoDbPersistence } from 'pip-services-runtime-node';
-import { Converter } from 'pip-services-runtime-node';
-import { TagsProcessor } from 'pip-services-runtime-node';
-import { Version1 as StorageV1 } from 'pip-clients-storage-node';
+import { FilterParams } from 'pip-services-commons-node';
+import { PagingParams } from 'pip-services-commons-node';
+import { DataPage } from 'pip-services-commons-node';
+import { AnyValueMap } from 'pip-services-commons-node';
+import { IdentifiableMongoDbPersistence } from 'pip-services-data-node';
 
-import { FeedbacksDataConverter } from './FeedbacksDataConverter';
+import { PartyReferenceV1 } from '../data/version1/PartyReferenceV1';
+import { FeedbackV1 } from '../data/version1/FeedbackV1';
 import { IFeedbacksPersistence } from './IFeedbacksPersistence';
+import { FeedbacksMongoDbSchema } from './FeedbacksMongoDbSchema';
 
-export class FeedbacksMongoDbPersistence extends MongoDbPersistence implements IFeedbacksPersistence {
-	/**
-	 * Unique descriptor for the FeedbacksMongoDbPersistence component
-	 */
-	public static Descriptor: ComponentDescriptor = new ComponentDescriptor(
-		Category.Persistence, "pip-services-feedbacks", "mongodb", "*"
-	);
-    
-    private _storage: StorageV1.IStorageClient;
-    
+export class FeedbacksMongoDbPersistence 
+    extends IdentifiableMongoDbPersistence<FeedbackV1, string> 
+    implements IFeedbacksPersistence {
+
     constructor() {
-        super(FeedbacksMongoDbPersistence.Descriptor, require('./FeedbackModel'));
+        super('feedbacks', FeedbacksMongoDbSchema());
     }
 
-    public link(components: ComponentSet): void {
-        // Locate reference to quotes persistence component
-        this._storage = <StorageV1.IStorageClient>components.getOneRequired(
-        	new ComponentDescriptor(Category.Clients, "pip-services-storage", '*', '*')
-    	);
-        
-        super.link(components);
+    private composeFilter(filter: FilterParams): any {
+        filter = filter || new FilterParams();
+
+        let criteria = [];
+
+        let search = filter.getAsNullableString('search');
+        if (search != null) {
+            let searchRegex = new RegExp(search, "i");
+            let searchCriteria = [];
+            searchCriteria.push({ title: { $regex: searchRegex } });
+            searchCriteria.push({ content: { $regex: searchRegex } });
+            searchCriteria.push({ reply: { $regex: searchRegex } });
+            searchCriteria.push({ 'sender.name': { $regex: searchRegex } });
+            searchCriteria.push({ 'sender.email': { $regex: searchRegex } });
+            criteria.push({ $or: searchCriteria });
+        }
+
+        let id = filter.getAsNullableString('id');
+        if (id != null)
+            criteria.push({ _id: id });
+
+        let category = filter.getAsNullableString('category');
+        if (category != null)
+            criteria.push({ category: category });
+
+        let app = filter.getAsNullableString('app');
+        if (app != null)
+            criteria.push({ app: app });
+
+        let type = filter.getAsNullableString('type');
+        if (type != null)
+            criteria.push({ type: type });
+
+        let senderId = filter.getAsNullableInteger('sender_id');
+        if (senderId != null)
+            criteria.push({ 'sender.id': senderId });
+
+        let senderEmail = filter.getAsNullableInteger('sender_email');
+        if (senderEmail != null)
+            criteria.push({ 'sender.email': senderEmail });
+
+        let replierId = filter.getAsNullableInteger('replier_id');
+        if (replierId != null)
+            criteria.push({ 'replier.id': replierId });
+
+        let replied = filter.getAsNullableBoolean('replied');
+        if (replied != null)
+            criteria.push({ 'reply_time': { $exists: replied } });
+
+        let sentFromTime = filter.getAsNullableDateTime('sent_from_time');
+        if (sentFromTime != null)
+            criteria.push({ sent_time: { $gte: sentFromTime } });
+
+        let sentToTime = filter.getAsNullableDateTime('sent_to_time');
+        if (sentToTime != null)
+            criteria.push({ sent_time: { $lt: sentToTime } });
+
+        return criteria.length > 0 ? { $and: criteria } : {};
     }
 
-    private defineFilterCondition(filter: any): any {
-        let criteria = _.pick(filter, 
-            'category', 'app', 'sender_id', 'sender_email', 'replier_id'
+    public getPageByFilter(correlationId: string, filter: FilterParams, paging: PagingParams, callback: any) {
+        super.getPageByFilter(correlationId, this.composeFilter(filter), paging, '-time', null, callback);
+    }
+
+    public send(correlationId: string, item: FeedbackV1, user: PartyReferenceV1,
+        callback: (err: any, item: FeedbackV1) => void): void {
+        item.sender = user;
+        item.sent_time = new Date();
+
+        super.create(correlationId, item, callback);
+    }
+
+    public reply(correlationId: string, id: string, reply: string, user: PartyReferenceV1,
+        callback: (err: any, item: FeedbackV1) => void): void {
+        let data: AnyValueMap = AnyValueMap.fromTuples(
+            'reply_time', new Date(),
+            'reply', reply,
+            'replier', user
         );
 
-        // Decode sender id
-        if (filter.sender_id)
-            criteria['sender.id'] = filter.sender_id;
-
-        // Decode sender email
-        if (filter.sender_email)
-            criteria['sender.email'] = filter.sender_email;
-
-        // Decode replier id
-        if (filter.replier_id)
-            criteria['replier.id'] = filter.replier_id;
-
-        // Start time interval
-        if (filter.from) {
-            criteria.$and = criteria.$and || [];
-            criteria.$and.push({
-                sent: { $gte: filter.from }
-            });
-        }
-
-        // End time interval
-        if (filter.to) {
-            criteria.$and = criteria.$and || [];
-            criteria.$and.push({
-                sent: { $lt: filter.to }
-            });
-        }
-
-        // Replied flag
-        if (filter.replied != null) {
-            criteria.replied = {
-                $exists: Converter.toBoolean(filter.replied)
-            };
-        }
-
-        // Full text search
-        if (filter.search) {
-            var search = filter.search,
-                searchRegex = new RegExp(search, 'i');
-
-            // Todo: This will not work for multi-language text
-            criteria.$or = [
-                { title: { $regex: searchRegex} },
-                { content: { $regex: searchRegex} },
-                { sender_name: { $regex: searchRegex} }
-            ];
-        }
-                
-        return criteria;
-    }
-        
-    public getFeedbacks(correlationId: string, filter: FilterParams, paging: PagingParams, callback: any) {
-        let criteria = this.defineFilterCondition(filter);
-
-        this.getPage(criteria, paging, '-sent', { custom_dat: 0 }, callback);
+        super.updatePartially(correlationId, id, data, callback);
     }
 
-    public getFeedbackById(correlationId: string, feedbackId: string, callback: any) {
-        this.getById(feedbackId, callback);
-    }
-
-    public sendFeedback(correlationId: string, feedback: any, user: any, callback: any) {            
-        let newItem = FeedbacksDataConverter.validate(feedback);            
-        newItem = _.omit(newItem, 'replied', 'replier', 'reply');
-        
-        newItem._id = newItem.id || this.createUuid();
-        newItem.sent = new Date();
-        if (user) newItem.sender = _.pick(user, 'id', 'name', 'email');
-
-        let item;
-        
-        async.series([
-        // Create feedback
-            (callback) => {
-                this.create(newItem, (err, data) => {
-                    item = data;
-                    callback(err);
-                });
-            },
-        // Add file references
-            (callback) => {
-                this._storage.addBlockRefs(
-                    correlationId,
-                    FeedbacksDataConverter.getBlockIds(item),
-                    {
-                        type: 'feedback',
-                        id: item._id,
-                        name: Converter.fromMultiString(item)
-                    },  
-                    callback  
-                );
-            }
-        ], (err) => {
-            callback(err, item);
-        });
-    }
-
-    public replyFeedback(correlationId: string, feedbackId: string, reply: string, user: any, callback) {
-        // Todo: Send email back to sender
-        this._model.findByIdAndUpdate(
-            feedbackId,
-            {
-                $set: {
-                    replied: new Date(),
-                    replier: _.pick(user, 'id', 'name', 'email'),
-                    reply: reply
-                }
-            },
-            { 'new': true },
-            (err, item) => {
-                item = this.convertItem(item);
-                callback(err, item);
-            }
-        );
-    }
-
-    public deleteFeedback(correlationId: string, feedbackId: string, callback) {
-        let item;
-
-        async.series([
-        // Remove feedback
-            (callback) => {
-                this.delete(
-                    feedbackId,
-                    (err, data) => {
-                        item = data;
-                        callback(err);
-                    }
-                );
-            },
-        // Remove block references
-            (callback) => {
-                if (item == null) {
-                    callback();
-                    return;
-                }
-                
-                this._storage.removeBlockRefs(
-                    correlationId,
-                    FeedbacksDataConverter.getBlockIds(item),
-                    {
-                        type: 'feedback',
-                        id: item._id
-                    },
-                    callback
-                );
-            }
-        ], (err) => {
-            callback(err);
-        });
-    }
 }

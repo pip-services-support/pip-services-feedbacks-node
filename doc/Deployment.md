@@ -13,7 +13,7 @@ You can get it from the official site at https://nodejs.org/en/download
 
 **Step 1.** Download microservices by following [instructions](Download.md)
 
-**Step 2.** Add **config.json** file to the root of the microservice folder and set configuration parameters. 
+**Step 2.** Add **config.yaml** file to the root of the microservice folder and set configuration parameters. 
 See [Configuration Guide](Configuration.md) for details.
 
 **Step 3.** Start the microservice using the command:
@@ -34,7 +34,7 @@ To learn more about Seneca microservices framework to go http://senecajs.org
     ...
     "dependencies": {
         ....
-        "pip-services-feedbacks": "git+ssh://git@github.com:pip-services/pip-services-feedbacks.git",
+        "pip-services-feedbacks-node": "^1.0.*",
         ...
     }
 }
@@ -59,25 +59,27 @@ See [Configuration Guide](Configuration.md) for details.
 var seneca = require('seneca')();
 
 var config = {
-    log: { type: 'console' },
-    counters: { type: 'log' },
-    db: {
+    logger: { 
+        level: 'debug' 
+    },
+    persistence: {
         type: 'file',
         path: 'feedbacks.json'
     },
-    deps: {
-        name: 'storage',
-        type: 'rest',
+    attachments: {
+        type: 'http',
         transport: {
             type: 'http',
             host: 'localhost',
-            port: 8010
+            port: 8082
         }
     }
 };
 
-seneca.use('pip-services-feedbacks', config);
+var plugin = require('pip-services-feedbacks-node').FeedbacksSenecaPlugin;
+
+seneca.use(plugin, config);
 ```
 
 You can use the microservice by calling seneca commands directly as described in [Seneca Protocol](SenecaProtocolV1.md)
-or by using [FeedbacksSenecaClient](https://github.com/pip-services/pip-clients-feedbacks-node/NodeClientApiV1.md/#client_seneca)
+or by using [FeedbacksSenecaClient](https://github.com/pip-services-support/pip-clients-feedbacks-node/NodeClientApiV1.md/#client_seneca)

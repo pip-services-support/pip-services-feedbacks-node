@@ -1,13 +1,7 @@
-/**
- * @file Feedbacks process launcher
- * @copyright Digital Living Software Corp. 2014-2016
- */
+let FeedbacksProcess = require('../obj/src/container/FeedbacksProcess').FeedbacksProcess;
 
-/* global */
-
-'use strict';
-
-var FeedbacksProcessRunner = require('../lib/src/run/FeedbacksProcessRunner').FeedbacksProcessRunner;
-
-var runner = new FeedbacksProcessRunner();
-runner.startWithDefaultConfig('../config/config.json');
+try {
+    new FeedbacksProcess().run(process.argv);
+} catch (ex) {
+    console.error(ex);
+}

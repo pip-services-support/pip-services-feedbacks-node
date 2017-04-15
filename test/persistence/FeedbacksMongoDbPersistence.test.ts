@@ -1,42 +1,32 @@
-import { Version1 as StorageV1 } from 'pip-clients-storage-node';
-let StorageNullClient = StorageV1.StorageNullClient;
-
-import { ComponentSet } from 'pip-services-runtime-node';
-import { ComponentConfig } from 'pip-services-runtime-node';
-import { DynamicMap } from 'pip-services-runtime-node';
+import { YamlConfigReader } from 'pip-services-commons-node';
 
 import { FeedbacksMongoDbPersistence } from '../../src/persistence/FeedbacksMongoDbPersistence';
 import { FeedbacksPersistenceFixture } from './FeedbacksPersistenceFixture';
 
-let options = new DynamicMap(require('../../../config/config'));
-let dbOptions = ComponentConfig.fromValue(options.getNullableMap('persistence'));
-
 suite('FeedbacksMongoDbPersistence', ()=> {
-    // Skip test if mongodb is not configured
-    if (dbOptions.getRawContent().getString('descriptor.type') != 'mongodb')
-        return; 
-    
-    let db = new FeedbacksMongoDbPersistence();
-    db.configure(dbOptions);
+    let persistence: FeedbacksMongoDbPersistence;
+    let fixture: FeedbacksPersistenceFixture;
 
-    let fixture = new FeedbacksPersistenceFixture(db);
-
-    let storage = new StorageNullClient(null);
-    let components = ComponentSet.fromComponents(db, storage);
-
-    suiteSetup((done) => {       
-        db.link(components);
-        db.open(done);
-    });
-    
-    suiteTeardown((done) => {
-        db.close(done);
-    });
-    
     setup((done) => {
-        db.clearTestData(done);
+        let config = YamlConfigReader.readConfig(null, './config/test_connections.yaml', null);
+        let dbConfig = config.getSection('mongodb');
+
+        persistence = new FeedbacksMongoDbPersistence();
+        persistence.configure(dbConfig);
+
+        fixture = new FeedbacksPersistenceFixture(persistence);
+
+        persistence.open(null, (err: any) => {
+            persistence.clear(null, (err) => {
+                done(err);
+            });
+        });
     });
     
+    teardown((done) => {
+        persistence.close(null, done);
+    });
+
     test('Send Feedback', (done) => {
         fixture.testSendFeedback(done);
     });
@@ -56,5 +46,5 @@ suite('FeedbacksMongoDbPersistence', ()=> {
     test('Delete Feedback', (done) => {
         fixture.testDeleteFeedback(done);
     });
-
+    
 });

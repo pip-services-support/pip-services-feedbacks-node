@@ -1,43 +1,25 @@
-import { Version1 as StorageV1 } from 'pip-clients-storage-node';
-let StorageNullClient = StorageV1.StorageNullClient;
-
-import { ComponentSet } from 'pip-services-runtime-node';
-import { ComponentConfig } from 'pip-services-runtime-node';
-import { DynamicMap } from 'pip-services-runtime-node';
+import { ConfigParams } from 'pip-services-commons-node';
 
 import { FeedbacksFilePersistence } from '../../src/persistence/FeedbacksFilePersistence';
 import { FeedbacksPersistenceFixture } from './FeedbacksPersistenceFixture';
 
-let config = ComponentConfig.fromValue({
-    descriptor: {
-        type: 'file'
-    },
-    options: {
-        path: './data/feedbacks.test.json',
-        data: []
-    }
-});
-
 suite('FeedbacksFilePersistence', ()=> {
-    let db, fixture, storage;
+    let persistence: FeedbacksFilePersistence;
+    let fixture: FeedbacksPersistenceFixture;
     
     setup((done) => {
-        db = new FeedbacksFilePersistence();
-        db.configure(config);
+        persistence = new FeedbacksFilePersistence('./data/feedbacks.test.json');
 
-        fixture = new FeedbacksPersistenceFixture(db);
-
-        storage = new StorageNullClient();
-        storage.configure(new ComponentConfig());
-
-        let components = ComponentSet.fromComponents(db, storage);
-
-        db.link(components);
-        db.open(done);
+        fixture = new FeedbacksPersistenceFixture(persistence);
+        
+        persistence.open(null, (err) => {
+            if (err) done(err);
+            else persistence.clear(null, done);
+        });
     });
     
     teardown((done) => {
-        db.close(done);
+        persistence.close(null, done);
     });
         
     test('Send Feedback', (done) => {
@@ -59,5 +41,4 @@ suite('FeedbacksFilePersistence', ()=> {
     test('Delete Feedback', (done) => {
         fixture.testDeleteFeedback(done);
     });
-
 });

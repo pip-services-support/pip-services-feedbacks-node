@@ -9,7 +9,7 @@ var seneca = require('seneca')();
 seneca.client({
     type: 'tcp', // Microservice seneca protocol
     localhost: 'localhost', // Microservice localhost
-    port: 8812, // Microservice seneca port
+    port: 8080, // Microservice seneca port
 });
 ```
 
@@ -29,17 +29,35 @@ seneca.act(
 );
 ```
 
-* [Feedback class](#class1)
-* [FeedbackPage class](#class2)
+* [DocumentReferenceV1 class](#class1)
+* [PartyReferenceV1 class](#class2)
+* [FeedbackV1 class](#class3)
 * [cmd: 'get_feedbacks'](#operation1)
 * [cmd: 'get_feedback_by_id'](#operation2)
 * [cmd: 'send_feedback'](#operation3)
 * [cmd: 'reply_feedback'](#operation4)
-* [cmd: 'delete_feedback'](#operation5)
+* [cmd: 'delete_feedback_by_id'](#operation5)
 
 ## Data types
 
-### <a name="class1"></a> Feedback class
+### <a name="class1"></a> DocumentReferenceV1 class
+
+Contains reference to a document attachment
+
+**Properties:**
+- id: string - unique feedback id
+- name: string - document (file) name
+
+### <a name="class2"></a> PartyReferenceV1 class
+
+Contains reference to sending or replying party
+
+**Properties:**
+- id: string - unique feedback id
+- name: string - party name
+- email: string - (optional) party email address (optional)
+
+### <a name="class3"></a> Feedback class
 
 Represents user's feedback. 
 
@@ -47,39 +65,23 @@ Represents user's feedback.
 - id: string - unique feedback id
 - category: string - feedback category, i.e. 'issue', 'feature', 'copyright', 'general', etc.
 - app: string - (optional) application name
-- sender: PartyReference - (optional) party who sent the feedback
-  - id: string - (optional) unique user id who sent the feedback
-  - name: string - sender full name
-  - email: string - sender email address to send reply
-- sent: Date - date and time when feedback was sent
+- sender: PartyReferenceV1 - (optional) party who sent the feedback
+- sent_time: Date - date and time when feedback was sent
 - title: string - (optional) feedback title
 - content: string - feedback textual content
 - pic_ids: string[] - (optional) array of picture block ids in storage attached to this feedback
-- docs: Reference[] - (optional) array of attached documents
-  - id: string - block id in storage attached to this feedback
-  - name: string - attached document/file name
+- docs: DocumentReferenceV1[] - (optional) array of attached documents
 - company_name: string - name of the company who reported copyright violation
 - company_addr: string - mail address of the company who reported copyright violation
 - copyright_holder: string - holder/owner of the violated copyright
 - original_location: string - original location of copyrighted material
 - copyrighted_work: string - exact description of the copyrighted material
 - unauth_loc: string - unauthorized location of the violated copyright
-- replier: PartyReference - party who replied the feedback
-  - id: string - unique user id who replied the feedback
-  - name: string - replier full name
-  - email: string - replier email address to continue communication
-- replied: Date - date and time when feedback was reply
+- replier: PartyReferenceV1 - party who replied the feedback
+- reply_time: Date - date and time when feedback was reply
 - reply: text - reply textual content
 - custom_hdr: Object - custom data summary that is always returned (in list and details)
 - custom_dat: Object - custom data details that is returned only when a single object is returned (details)
-
-### <a name="class3"></a> FeedbackPage class
-
-Represents a paged result with subset of requested Feedback objects
-
-**Properties:**
-- data: Feedback[] - array of retrieved Feedback page
-- count: int - total number of objects in retrieved resultset
 
 ## Operations
 
@@ -94,8 +96,8 @@ Retrieves a list of feedbacks by specified criteria
   - sender_id: string - (optional) unique user id of the sender
   - sender_email: string - (optional) email address of the sender
   - replier_id: string - (optional) unique user id of the replier
-  - from: Date - (optional) start of feedback created interval
-  - to: Date - (optional) end of feedback created interval
+  - sent\_from\_time: Date - (optional) start of feedback created interval
+  - send\_to\_time: Date - (optional) end of feedback created interval
   - replied: boolean - **true** to filter replied feedbacks, **false** to filter feedbacks waiting for reply
   - search: string - string for full text search in title, content and sender name
 - paging: object - paging parameters
@@ -104,9 +106,9 @@ Retrieves a list of feedbacks by specified criteria
 
 **Returns:**
 - err: Error - occured error or null for success
-- result: FeedbackPage - retrieved Feedback in page format
+- result: DataPage<FeedbackV1> - retrieved Feedback in page format
 
-### <a name="operation2"></a> Cmd: 'get_feedback_by_id'
+### <a name="operation2"></a> Cmd: 'get\_feedback\_by_id'
 
 Retrieves feedback by its unique id. 
 
@@ -115,22 +117,19 @@ Retrieves feedback by its unique id.
 
 **Returns:**
 - err: Error - occured error or null for success
-- result: Feedback - retrieved Feedback object
+- result: FeedbackV1 - retrieved Feedback object
 
 ### <a name="operation3"></a> Cmd: 'send_feedback'
 
 Sends a feedback from a user.
 
 **Arguments:** 
-- feedback: Feedback - a feedback to be sent
-- user: User - feedback sender
-  - id: string - (optional) sender unique user id
-  - name: string - full sender name
-  - email: string - sender email address
+- feedback: FeedbackV1 - a feedback to be sent
+- user: PartyReferenceV1 - feedback sender
 
 **Returns:**
 - err: Error - occured error or null for success
-- result: Feedback - created Feedback object
+- result: FeedbackV1 - created Feedback object
 
 ### <a name="operation4"></a> Cmd: 'reply_feedback'
 
@@ -138,17 +137,14 @@ Reply feedback specified by its unique id.
 
 **Arguments:** 
 - feedback_id: string - unique feedback id
-- user: User - feedback replier
-  - id: string - (optional) replier unique user id
-  - name: string - full replier name
-  - email: string - replier email address
+- user: PartyReferenceV1 - feedback replier
 - reply: string - replied textual content
 
 **Returns:**
 - err: Error - occured error or null for success
-- result: Feedback - replied Feedback object
+- result: FeedbackV1 - replied Feedback object
 
-### <a name="operation5"></a> Cmd: 'delete_feedback'
+### <a name="operation5"></a> Cmd: 'delete\_feedback\_by_id'
 
 Deletes user feedback specified by its unique id.
 

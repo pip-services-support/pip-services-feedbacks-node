@@ -57,7 +57,7 @@ Contains reference to sending or replying party
 - name: string - party name
 - email: string - (optional) party email address (optional)
 
-### <a name="class3"></a> Feedback class
+### <a name="class3"></a> FeedbackV1 class
 
 Represents user's feedback. 
 

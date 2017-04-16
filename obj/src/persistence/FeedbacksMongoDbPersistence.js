@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 let _ = require('lodash');
 const pip_services_commons_node_1 = require("pip-services-commons-node");
-const pip_services_commons_node_2 = require("pip-services-commons-node");
 const pip_services_data_node_1 = require("pip-services-data-node");
 const FeedbacksMongoDbSchema_1 = require("./FeedbacksMongoDbSchema");
 class FeedbacksMongoDbPersistence extends pip_services_data_node_1.IdentifiableMongoDbPersistence {
@@ -47,25 +46,16 @@ class FeedbacksMongoDbPersistence extends pip_services_data_node_1.IdentifiableM
         let replied = filter.getAsNullableBoolean('replied');
         if (replied != null)
             criteria.push({ 'reply_time': { $exists: replied } });
-        let sentFromTime = filter.getAsNullableDateTime('sent_from_time');
-        if (sentFromTime != null)
-            criteria.push({ sent_time: { $gte: sentFromTime } });
-        let sentToTime = filter.getAsNullableDateTime('sent_to_time');
-        if (sentToTime != null)
-            criteria.push({ sent_time: { $lt: sentToTime } });
+        let fromSentTime = filter.getAsNullableDateTime('from_sent_time');
+        if (fromSentTime != null)
+            criteria.push({ sent_time: { $gte: fromSentTime } });
+        let toSentTime = filter.getAsNullableDateTime('to_sent_time');
+        if (toSentTime != null)
+            criteria.push({ sent_time: { $lt: toSentTime } });
         return criteria.length > 0 ? { $and: criteria } : {};
     }
     getPageByFilter(correlationId, filter, paging, callback) {
-        super.getPageByFilter(correlationId, this.composeFilter(filter), paging, '-time', null, callback);
-    }
-    send(correlationId, item, user, callback) {
-        item.sender = user;
-        item.sent_time = new Date();
-        super.create(correlationId, item, callback);
-    }
-    reply(correlationId, id, reply, user, callback) {
-        let data = pip_services_commons_node_2.AnyValueMap.fromTuples('reply_time', new Date(), 'reply', reply, 'replier', user);
-        super.updatePartially(correlationId, id, data, callback);
+        super.getPageByFilter(correlationId, this.composeFilter(filter), paging, '-sent_time', null, callback);
     }
 }
 exports.FeedbacksMongoDbPersistence = FeedbacksMongoDbPersistence;

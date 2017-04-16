@@ -5,7 +5,6 @@ import { PagingParams } from 'pip-services-commons-node';
 import { DataPage } from 'pip-services-commons-node';
 import { AnyValueMap } from 'pip-services-commons-node';
 import { IdentifiableMemoryPersistence } from 'pip-services-data-node';
-import { NotFoundException } from 'pip-services-commons-node';
 
 import { FeedbackV1 } from '../data/version1/FeedbackV1';
 import { PartyReferenceV1 } from '../data/version1/PartyReferenceV1';

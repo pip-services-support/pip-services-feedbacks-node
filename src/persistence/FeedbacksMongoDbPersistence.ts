@@ -68,38 +68,19 @@ export class FeedbacksMongoDbPersistence
         if (replied != null)
             criteria.push({ 'reply_time': { $exists: replied } });
 
-        let sentFromTime = filter.getAsNullableDateTime('sent_from_time');
-        if (sentFromTime != null)
-            criteria.push({ sent_time: { $gte: sentFromTime } });
+        let fromSentTime = filter.getAsNullableDateTime('from_sent_time');
+        if (fromSentTime != null)
+            criteria.push({ sent_time: { $gte: fromSentTime } });
 
-        let sentToTime = filter.getAsNullableDateTime('sent_to_time');
-        if (sentToTime != null)
-            criteria.push({ sent_time: { $lt: sentToTime } });
+        let toSentTime = filter.getAsNullableDateTime('to_sent_time');
+        if (toSentTime != null)
+            criteria.push({ sent_time: { $lt: toSentTime } });
 
         return criteria.length > 0 ? { $and: criteria } : {};
     }
 
     public getPageByFilter(correlationId: string, filter: FilterParams, paging: PagingParams, callback: any) {
-        super.getPageByFilter(correlationId, this.composeFilter(filter), paging, '-time', null, callback);
-    }
-
-    public send(correlationId: string, item: FeedbackV1, user: PartyReferenceV1,
-        callback: (err: any, item: FeedbackV1) => void): void {
-        item.sender = user;
-        item.sent_time = new Date();
-
-        super.create(correlationId, item, callback);
-    }
-
-    public reply(correlationId: string, id: string, reply: string, user: PartyReferenceV1,
-        callback: (err: any, item: FeedbackV1) => void): void {
-        let data: AnyValueMap = AnyValueMap.fromTuples(
-            'reply_time', new Date(),
-            'reply', reply,
-            'replier', user
-        );
-
-        super.updatePartially(correlationId, id, data, callback);
+        super.getPageByFilter(correlationId, this.composeFilter(filter), paging, '-sent_time', null, callback);
     }
 
 }

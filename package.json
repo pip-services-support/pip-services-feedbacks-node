@@ -1,5 +1,5 @@
 {
-    "name": "pip-services-feedbacks",
+    "name": "pip-services-feedbacks-node",
     "version": "1.0.0",
     "author": "Conceptual Vision Consulting LLC",
     "description": "Users feedback microservice in Node.js",

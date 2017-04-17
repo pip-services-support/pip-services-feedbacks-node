@@ -10,7 +10,7 @@ The microservice currently supports the following deployment options:
 * Persistence: In-Memory, Flat Files, MongoDB
 
 This microservice has dependencies on the following microservices:
-- [pip-services-storage](https://github.com/pip-services/pip-services-storage) - to reference pictures and documents associates with feedbacks
+- [pip-services-attachments](https://github.com/pip-services-content/pip-services-attachments-node) - to reference pictures and documents associates with feedbacks
 
 <a name="links"></a> Quick Links:
 
@@ -19,7 +19,7 @@ This microservice has dependencies on the following microservices:
 * [Configuration Guide](doc/Configuration.md)
 * [Deployment Guide](doc/Deployment.md)
 * Client SDKs
-  - [Node.js SDK](https://github.com/pip-services/pip-clients-feedbacks-node)
+  - [Node.js SDK](https://github.com/pip-services-support/pip-clients-feedbacks-node)
 * Communication Protocols
   - [HTTP Version 1](doc/HttpProtocolV1.md)
   - [Seneca Version 1](doc/SenecaProtocolV1.md)

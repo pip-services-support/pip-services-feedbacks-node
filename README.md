@@ -24,6 +24,75 @@ This microservice has dependencies on the following microservices:
   - [HTTP Version 1](doc/HttpProtocolV1.md)
   - [Seneca Version 1](doc/SenecaProtocolV1.md)
 
+##  Contract
+
+Logical contract of the microservice is presented below. For physical implementation (HTTP/REST, Thrift, Seneca, Lambda, etc.),
+please, refer to documentation of the specific protocol.
+
+```typescript
+class FeedbackV1 implements IStringIdentifiable {
+    /* Identification */
+    public id: string;
+    public category: string;
+    public app?: string;
+
+    /* Generic request properties */
+    public sender: PartyReferenceV1;
+    public sent_time: Date;
+
+    /* Common properties */
+    public title?: string;
+    public content?: string;
+    public pic_ids: string[];
+    public docs: DocumentReferenceV1[];
+
+    /* Copyright/Trademark Violation */
+    public company_name?: string;
+    public company_addr?: string;
+    public copyright_holder?: string;
+    public original_loc?: string;
+    public copyrighted_work?: string;
+    public unauth_loc?: string;
+
+    /* Generic reply properties */
+    public reply_time?: Date;
+    public replier?: PartyReferenceV1;
+    public reply?: string;
+
+    /* Custom fields */
+    public custom_hdr?: any;
+    public custom_dat?: any;
+}
+
+class DocumentReferenceV1 implements IStringIdentifiable {
+    public id: string;
+    public name?: string;
+}
+
+class PartyReferenceV1 implements IStringIdentifiable {
+    public id: string;
+    public name?: string;
+    public email?: string;
+}
+
+interface IFeedbacksBusinessLogic {
+    getFeedbacks(correlationId: string, filter: FilterParams, paging: PagingParams,
+        callback: (err: any, page: DataPage<FeedbackV1>) => void): void;
+
+    getFeedbackById(correlationId: string, feedbackId: string,
+        callback: (err: any, feedback: FeedbackV1) => void): void;
+
+    sendFeedback(correlationId: string, feedback: FeedbackV1, user: PartyReferenceV1,
+        callback: (err: any, feedback: FeedbackV1) => void): void;
+
+    replyFeedback(correlationId: string, feedbackId: string, reply: string, user: PartyReferenceV1,
+        callback: (err: any, feedback: FeedbackV1) => void): void;
+
+    deleteFeedbackById(correlationId: string, feedbackId: string,
+        callback: (err: any, feedback: FeedbackV1) => void): void;
+}
+```
+
 ## Download
 
 Right now the only way to get the microservice is to check it out directly from github repository

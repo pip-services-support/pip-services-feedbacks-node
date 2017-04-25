@@ -1,7 +1,7 @@
 import { IStringIdentifiable } from 'pip-services-commons-node';
 
 import { PartyReferenceV1 } from './PartyReferenceV1';
-import { DocumentReferenceV1 } from './DocumentReferenceV1';
+import { AttachmentV1 } from './AttachmentV1';
 
 export class FeedbackV1 implements IStringIdentifiable {
 
@@ -14,7 +14,7 @@ export class FeedbackV1 implements IStringIdentifiable {
         this.title = title;
         this.content = content;
 
-        this.pic_ids = [];
+        this.pics = [];
         this.docs = [];
         this.sent_time = new Date();
     }
@@ -31,8 +31,8 @@ export class FeedbackV1 implements IStringIdentifiable {
     /* Common properties */
     public title?: string;
     public content?: string;
-    public pic_ids: string[];
-    public docs: DocumentReferenceV1[];
+    public pics: AttachmentV1[];
+    public docs: AttachmentV1[];
 
     /* Copyright/Trademark Violation */
     public company_name?: string;

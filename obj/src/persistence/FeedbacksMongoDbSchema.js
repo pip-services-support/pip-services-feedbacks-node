@@ -4,11 +4,12 @@ const mongoose_1 = require("mongoose");
 let Mixed = mongoose_1.Schema.Types.Mixed;
 exports.FeedbacksMongoDbSchema = function (collection) {
     collection = collection || 'feedbacks';
-    let documentReferenceSchema = new mongoose_1.Schema({
-        id: { type: String, required: true },
-        name: { type: String, required: true }
+    let attachmentSchema = new mongoose_1.Schema({
+        id: { type: String, required: false },
+        uri: { type: String, required: false },
+        name: { type: String, required: false }
     });
-    documentReferenceSchema.set('toJSON', {
+    attachmentSchema.set('toJSON', {
         transform: function (doc, ret) {
             //ret.id = ret._id;
             delete ret._id;
@@ -40,8 +41,8 @@ exports.FeedbacksMongoDbSchema = function (collection) {
         /* Common properties */
         title: { type: String, required: false },
         content: { type: String, required: false },
-        pic_ids: { type: [String], required: false },
-        docs: { type: [documentReferenceSchema], required: false },
+        pics: { type: [attachmentSchema], required: false },
+        docs: { type: [attachmentSchema], required: false },
         /* Copyright/Trademark Violation */
         company_name: { type: String, required: false },
         company_addr: { type: String, required: false },

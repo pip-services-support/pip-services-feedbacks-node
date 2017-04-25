@@ -29,7 +29,7 @@ seneca.act(
 );
 ```
 
-* [DocumentReferenceV1 class](#class1)
+* [AttachmentV1 class](#class1)
 * [PartyReferenceV1 class](#class2)
 * [FeedbackV1 class](#class3)
 * [cmd: 'get_feedbacks'](#operation1)
@@ -40,7 +40,7 @@ seneca.act(
 
 ## Data types
 
-### <a name="class1"></a> DocumentReferenceV1 class
+### <a name="class1"></a> AttachmentV1 class
 
 Contains reference to a document attachment
 
@@ -70,7 +70,7 @@ Represents user's feedback.
 - title: string - (optional) feedback title
 - content: string - feedback textual content
 - pic_ids: string[] - (optional) array of picture block ids in storage attached to this feedback
-- docs: DocumentReferenceV1[] - (optional) array of attached documents
+- docs: AttachmentV1[] - (optional) array of attached documents
 - company_name: string - name of the company who reported copyright violation
 - company_addr: string - mail address of the company who reported copyright violation
 - copyright_holder: string - holder/owner of the violated copyright

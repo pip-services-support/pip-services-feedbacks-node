@@ -1,6 +1,6 @@
 import { IStringIdentifiable } from 'pip-services-commons-node';
 import { PartyReferenceV1 } from './PartyReferenceV1';
-import { DocumentReferenceV1 } from './DocumentReferenceV1';
+import { AttachmentV1 } from './AttachmentV1';
 export declare class FeedbackV1 implements IStringIdentifiable {
     constructor(id: string, category: string, app?: string, sender?: PartyReferenceV1, title?: string, content?: string);
     id: string;
@@ -10,8 +10,8 @@ export declare class FeedbackV1 implements IStringIdentifiable {
     sent_time: Date;
     title?: string;
     content?: string;
-    pic_ids: string[];
-    docs: DocumentReferenceV1[];
+    pics: AttachmentV1[];
+    docs: AttachmentV1[];
     company_name?: string;
     company_addr?: string;
     copyright_holder?: string;

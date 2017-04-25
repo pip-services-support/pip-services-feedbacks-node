@@ -17,11 +17,11 @@ import { IAttachmentsClientV1 } from 'pip-clients-attachments-node';
 import { PartyReferenceV1 } from '../data/version1/PartyReferenceV1';
 import { FeedbackV1 } from '../data/version1/FeedbackV1';
 import { IFeedbacksPersistence } from '../persistence/IFeedbacksPersistence';
-import { IFeedbacksBusinessLogic } from './IFeedbacksBusinessLogic';
+import { IFeedbacksController } from './IFeedbacksController';
 import { FeedbacksCommandSet } from './FeedbacksCommandSet';
 import { AttachmentsConnector } from './AttachmentsConnector';
 
-export class FeedbacksController implements IConfigurable, IReferenceable, ICommandable, IFeedbacksBusinessLogic {
+export class FeedbacksController implements IConfigurable, IReferenceable, ICommandable, IFeedbacksController {
     private static _defaultConfig: ConfigParams = ConfigParams.fromTuples(
         'dependencies.persistence', 'pip-services-feedbacks:persistence:*:*:1.0',
         'dependencies.attachments', 'pip-services-attachments:client:*:*:1.0'

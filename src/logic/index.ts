@@ -1,2 +1,2 @@
-export { IFeedbacksBusinessLogic } from './IFeedbacksBusinessLogic';
+export { IFeedbacksController } from './IFeedbacksController';
 export { FeedbacksController } from './FeedbacksController';

@@ -4,7 +4,7 @@ const pip_services_commons_node_1 = require("pip-services-commons-node");
 const pip_services_commons_node_2 = require("pip-services-commons-node");
 const pip_services_commons_node_3 = require("pip-services-commons-node");
 const PartyReferenceV1Schema_1 = require("./PartyReferenceV1Schema");
-const DocumentReferenceV1Schema_1 = require("./DocumentReferenceV1Schema");
+const AttachmentV1Schema_1 = require("./AttachmentV1Schema");
 class FeedbackV1Schema extends pip_services_commons_node_1.ObjectSchema {
     constructor() {
         super();
@@ -18,8 +18,8 @@ class FeedbackV1Schema extends pip_services_commons_node_1.ObjectSchema {
         /* Common properties */
         this.withOptionalProperty('title', pip_services_commons_node_3.TypeCode.String);
         this.withOptionalProperty('content', pip_services_commons_node_3.TypeCode.String);
-        this.withOptionalProperty('pic_ids', new pip_services_commons_node_2.ArraySchema(pip_services_commons_node_3.TypeCode.String));
-        this.withOptionalProperty('docs', new pip_services_commons_node_2.ArraySchema(new DocumentReferenceV1Schema_1.DocumentReferenceV1Schema()));
+        this.withOptionalProperty('pics', new pip_services_commons_node_2.ArraySchema(new AttachmentV1Schema_1.AttachmentV1Schema()));
+        this.withOptionalProperty('docs', new pip_services_commons_node_2.ArraySchema(new AttachmentV1Schema_1.AttachmentV1Schema()));
         /* Copyright/Trademark Violation */
         this.withOptionalProperty('company_name', pip_services_commons_node_3.TypeCode.String);
         this.withOptionalProperty('company_addr', pip_services_commons_node_3.TypeCode.String);

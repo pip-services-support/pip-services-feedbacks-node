@@ -1,1 +1,1 @@
-export { FeedbacksFactory } from './FeedbacksFactory';
+export { FeedbacksServiceFactory } from './FeedbacksServiceFactory';

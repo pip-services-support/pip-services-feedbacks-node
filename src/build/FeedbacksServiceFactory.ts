@@ -8,7 +8,7 @@ import { FeedbacksController } from '../logic/FeedbacksController';
 import { FeedbacksHttpServiceV1 } from '../services/version1/FeedbacksHttpServiceV1';
 import { FeedbacksSenecaServiceV1 } from '../services/version1/FeedbacksSenecaServiceV1'; 
 
-export class FeedbacksFactory extends Factory {
+export class FeedbacksServiceFactory extends Factory {
 	public static Descriptor = new Descriptor("pip-services-feedbacks", "factory", "default", "default", "1.0");
 	public static MemoryPersistenceDescriptor = new Descriptor("pip-services-feedbacks", "persistence", "memory", "*", "1.0");
 	public static FilePersistenceDescriptor = new Descriptor("pip-services-feedbacks", "persistence", "file", "*", "1.0");
@@ -19,12 +19,12 @@ export class FeedbacksFactory extends Factory {
 	
 	constructor() {
 		super();
-		this.registerAsType(FeedbacksFactory.MemoryPersistenceDescriptor, FeedbacksMemoryPersistence);
-		this.registerAsType(FeedbacksFactory.FilePersistenceDescriptor, FeedbacksFilePersistence);
-		this.registerAsType(FeedbacksFactory.MongoDbPersistenceDescriptor, FeedbacksMongoDbPersistence);
-		this.registerAsType(FeedbacksFactory.ControllerDescriptor, FeedbacksController);
-		this.registerAsType(FeedbacksFactory.SenecaServiceDescriptor, FeedbacksSenecaServiceV1);
-		this.registerAsType(FeedbacksFactory.HttpServiceDescriptor, FeedbacksHttpServiceV1);
+		this.registerAsType(FeedbacksServiceFactory.MemoryPersistenceDescriptor, FeedbacksMemoryPersistence);
+		this.registerAsType(FeedbacksServiceFactory.FilePersistenceDescriptor, FeedbacksFilePersistence);
+		this.registerAsType(FeedbacksServiceFactory.MongoDbPersistenceDescriptor, FeedbacksMongoDbPersistence);
+		this.registerAsType(FeedbacksServiceFactory.ControllerDescriptor, FeedbacksController);
+		this.registerAsType(FeedbacksServiceFactory.SenecaServiceDescriptor, FeedbacksSenecaServiceV1);
+		this.registerAsType(FeedbacksServiceFactory.HttpServiceDescriptor, FeedbacksHttpServiceV1);
 	}
 	
 }

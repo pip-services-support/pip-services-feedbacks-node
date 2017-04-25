@@ -3,7 +3,7 @@ import { ArraySchema } from 'pip-services-commons-node';
 import { TypeCode } from 'pip-services-commons-node';
 
 import { PartyReferenceV1Schema } from './PartyReferenceV1Schema';
-import { DocumentReferenceV1Schema } from './DocumentReferenceV1Schema';
+import { AttachmentV1Schema } from './AttachmentV1Schema';
 
 export class FeedbackV1Schema extends ObjectSchema {
     public constructor() {
@@ -21,8 +21,8 @@ export class FeedbackV1Schema extends ObjectSchema {
         /* Common properties */
         this.withOptionalProperty('title', TypeCode.String);
         this.withOptionalProperty('content', TypeCode.String);
-        this.withOptionalProperty('pic_ids', new ArraySchema(TypeCode.String));
-        this.withOptionalProperty('docs', new ArraySchema(new DocumentReferenceV1Schema()));
+        this.withOptionalProperty('pics', new ArraySchema(new AttachmentV1Schema()));
+        this.withOptionalProperty('docs', new ArraySchema(new AttachmentV1Schema()));
 
         /* Copyright/Trademark Violation */
         this.withOptionalProperty('company_name', TypeCode.String);

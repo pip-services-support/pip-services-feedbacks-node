@@ -6,7 +6,7 @@ import { IGetter } from 'pip-services-data-node';
 import { PartyReferenceV1 } from '../data/version1/PartyReferenceV1';
 import { FeedbackV1 } from '../data/version1/FeedbackV1';
 
-export interface IFeedbacksBusinessLogic {
+export interface IFeedbacksController {
     getFeedbacks(correlationId: string, filter: FilterParams, paging: PagingParams,
         callback: (err: any, page: DataPage<FeedbackV1>) => void): void;
 

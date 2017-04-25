@@ -1,8 +1,8 @@
 import { CommandSet } from 'pip-services-commons-node';
-import { IFeedbacksBusinessLogic } from './IFeedbacksBusinessLogic';
+import { IFeedbacksController } from './IFeedbacksController';
 export declare class FeedbacksCommandSet extends CommandSet {
     private _logic;
-    constructor(logic: IFeedbacksBusinessLogic);
+    constructor(logic: IFeedbacksController);
     private makeGetFeedbacksCommand();
     private makeGetFeedbackByIdCommand();
     private makeSendFeedbackCommand();

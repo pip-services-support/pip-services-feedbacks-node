@@ -9,8 +9,8 @@ import { ICommandable } from 'pip-services-commons-node';
 import { CommandSet } from 'pip-services-commons-node';
 import { PartyReferenceV1 } from '../data/version1/PartyReferenceV1';
 import { FeedbackV1 } from '../data/version1/FeedbackV1';
-import { IFeedbacksBusinessLogic } from './IFeedbacksBusinessLogic';
-export declare class FeedbacksController implements IConfigurable, IReferenceable, ICommandable, IFeedbacksBusinessLogic {
+import { IFeedbacksController } from './IFeedbacksController';
+export declare class FeedbacksController implements IConfigurable, IReferenceable, ICommandable, IFeedbacksController {
     private static _defaultConfig;
     private _dependencyResolver;
     private _persistence;

@@ -1,13 +1,13 @@
 import { IReferences } from 'pip-services-commons-node';
 import { ProcessContainer } from 'pip-services-container-node';
 
-import { FeedbacksFactory } from '../build/FeedbacksFactory';
+import { FeedbacksServiceFactory } from '../build/FeedbacksServiceFactory';
 
 export class FeedbacksProcess extends ProcessContainer {
 
     public constructor() {
         super("feedbacks", "User feedbacks microservice");
-        this._factories.add(new FeedbacksFactory);
+        this._factories.add(new FeedbacksServiceFactory);
     }
 
 }

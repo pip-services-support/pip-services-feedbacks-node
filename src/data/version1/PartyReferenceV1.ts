@@ -1,6 +1,4 @@
-import { IStringIdentifiable } from 'pip-services-commons-node';
-
-export class PartyReferenceV1 implements IStringIdentifiable {
+export class PartyReferenceV1 {
 
     public constructor(id: string, name?: string, email?: string) {
         this.id = id;

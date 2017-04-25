@@ -13,12 +13,12 @@ import { PagingParamsSchema } from 'pip-services-commons-node';
 import { FeedbackV1 } from '../data/version1/FeedbackV1';
 import { PartyReferenceV1Schema } from '../data/version1/PartyReferenceV1Schema';
 import { FeedbackV1Schema } from '../data/version1/FeedbackV1Schema';
-import { IFeedbacksBusinessLogic } from './IFeedbacksBusinessLogic';
+import { IFeedbacksController } from './IFeedbacksController';
 
 export class FeedbacksCommandSet extends CommandSet {
-    private _logic: IFeedbacksBusinessLogic;
+    private _logic: IFeedbacksController;
 
-	constructor(logic: IFeedbacksBusinessLogic) {
+	constructor(logic: IFeedbacksController) {
 		super();
 
 		this._logic = logic;

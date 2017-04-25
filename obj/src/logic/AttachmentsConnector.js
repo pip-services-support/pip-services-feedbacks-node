@@ -8,11 +8,13 @@ class AttachmentsConnector {
     }
     extractAttachmentIds(feedback) {
         let ids = [];
-        _.each(feedback.pic_ids, (id) => {
-            ids.push(id);
+        _.each(feedback.pics, (pic) => {
+            if (pic.id)
+                ids.push(pic.id);
         });
         _.each(feedback.docs, (doc) => {
-            ids.push(doc.id);
+            if (doc.id)
+                ids.push(doc.id);
         });
         return ids;
     }

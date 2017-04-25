@@ -8,7 +8,7 @@ class FeedbackV1 {
         this.sender = sender;
         this.title = title;
         this.content = content;
-        this.pic_ids = [];
+        this.pics = [];
         this.docs = [];
         this.sent_time = new Date();
     }

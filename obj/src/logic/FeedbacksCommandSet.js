@@ -40,7 +40,7 @@ class FeedbacksCommandSet extends pip_services_commons_node_1.CommandSet {
     makeSendFeedbackCommand() {
         return new pip_services_commons_node_2.Command("send_feedback", new pip_services_commons_node_5.ObjectSchema(true)
             .withRequiredProperty('feedback', new FeedbackV1Schema_1.FeedbackV1Schema())
-            .withRequiredProperty('user', new PartyReferenceV1Schema_1.PartyReferenceV1Schema()), (correlationId, args, callback) => {
+            .withOptionalProperty('user', new PartyReferenceV1Schema_1.PartyReferenceV1Schema()), (correlationId, args, callback) => {
             let feedback = args.get("feedback");
             let user = args.get("user");
             this._logic.sendFeedback(correlationId, feedback, user, callback);

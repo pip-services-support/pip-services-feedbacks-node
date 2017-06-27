@@ -65,7 +65,8 @@ export class FeedbacksController implements IConfigurable, IReferenceable, IComm
         callback: (err: any, feedback: FeedbackV1) => void): void {
         let newFeedback: FeedbackV1 = null;
 
-        feedback.sender = user;
+        if (user != null)
+            feedback.sender = user;
         feedback.sent_time = new Date();
 
         async.series([

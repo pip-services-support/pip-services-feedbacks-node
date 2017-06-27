@@ -62,7 +62,7 @@ export class FeedbacksCommandSet extends CommandSet {
 			"send_feedback",
 			new ObjectSchema(true)
 				.withRequiredProperty('feedback', new FeedbackV1Schema())
-				.withRequiredProperty('user', new PartyReferenceV1Schema()),
+				.withOptionalProperty('user', new PartyReferenceV1Schema()),
 			(correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
 				let feedback = args.get("feedback");
 				let user = args.get("user");

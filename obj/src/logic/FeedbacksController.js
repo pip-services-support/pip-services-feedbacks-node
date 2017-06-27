@@ -32,7 +32,8 @@ class FeedbacksController {
     }
     sendFeedback(correlationId, feedback, user, callback) {
         let newFeedback = null;
-        feedback.sender = user;
+        if (user != null)
+            feedback.sender = user;
         feedback.sent_time = new Date();
         async.series([
             (callback) => {

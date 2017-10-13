@@ -12,13 +12,13 @@
     "main": "./obj/src/index.js",
     "typings": "./obj/src/index.d.ts",
     "keywords": [
-        "pip.services", 
+        "pip.services",
         "support",
         "feedback",
         "microservice"
     ],
     "noAnalyze": true,
-    "repository" : {
+    "repository": {
         "type": "git",
         "url": "ssh://git@github.com:pip-services-support/pip-services-feedbacks-node.git"
     },
@@ -38,7 +38,7 @@
         "rebenchmark": "tsc && matcha -R clean -I tdd ./obj/benchmark/run.js"
     },
     "dependencies": {
-        "pip-services-commons-node": "^2.0.0",
+        "pip-services-commons-node": "^2.7.0",
         "pip-services-container-node": "^2.0.0",
         "pip-services-data-node": "^2.0.0",
         "pip-services-net-node": "^2.0.0",

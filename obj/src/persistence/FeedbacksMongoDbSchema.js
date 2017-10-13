@@ -32,7 +32,7 @@ exports.FeedbacksMongoDbSchema = function (collection) {
     });
     let schema = new mongoose_1.Schema({
         /* Identification */
-        _id: { type: String, unique: true },
+        _id: { type: String },
         category: { type: String, required: true, index: true },
         app: { type: String, required: false, index: true },
         /* Generic request properties */

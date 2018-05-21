@@ -1,6 +1,6 @@
 {
-    "name": "pip-services-roles-node",
+    "name": "pip-services-feedbacks-node",
     "version": "1.0.0",
     "registry": "pipdevs",
-    "build": 8
+    "build": 1
 }

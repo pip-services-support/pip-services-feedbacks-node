@@ -1,8 +1,7 @@
 /node_modules
 /npm-debug.log
 /.idea
-/config/config.yml
-/config/test_connections.yml
 /data/feedbacks.test.json
 /data/feedbacks.json
 /obj/test
+/docker/id_rsa*

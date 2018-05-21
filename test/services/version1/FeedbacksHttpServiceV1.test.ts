@@ -73,7 +73,7 @@ suite('FeedbacksHttpServiceV1', ()=> {
         async.series([
         // Send one feedback
             (callback) => {
-                rest.post('/feedbacks/send_feedback',
+                rest.post('/v1/feedbacks/send_feedback',
                     {
                         feedback: FEEDBACK,
                         user: USER1
@@ -97,7 +97,7 @@ suite('FeedbacksHttpServiceV1', ()=> {
             },
         // Send another feedback
             (callback) => {
-                rest.post('/feedbacks/send_feedback',
+                rest.post('/v1/feedbacks/send_feedback',
                     {
                         feedback: FEEDBACK,
                         user: USER2
@@ -121,7 +121,7 @@ suite('FeedbacksHttpServiceV1', ()=> {
             },
         // Get all feedbacks
             (callback) => {
-                rest.post('/feedbacks/get_feedbacks',
+                rest.post('/v1/feedbacks/get_feedbacks',
                     { },
                     (err, req, res, feedbacks) => {
                         assert.isNull(err);
@@ -135,7 +135,7 @@ suite('FeedbacksHttpServiceV1', ()=> {
             },
         // Reply the feedback
             (callback) => {
-                rest.post('/feedbacks/reply_feedback',
+                rest.post('/v1/feedbacks/reply_feedback',
                     {
                         feedback_id: feedback1.id,
                         reply: 'This is a reply',
@@ -158,7 +158,7 @@ suite('FeedbacksHttpServiceV1', ()=> {
             },
         // Delete feedback
             (callback) => {
-                rest.post('/feedbacks/delete_feedback_by_id',
+                rest.post('/v1/feedbacks/delete_feedback_by_id',
                     {
                         feedback_id: feedback1.id
                     },
@@ -171,7 +171,7 @@ suite('FeedbacksHttpServiceV1', ()=> {
             },
         // Try to get delete feedback
             (callback) => {
-                rest.post('/feedbacks/get_feedback_by_id',
+                rest.post('/v1/feedbacks/get_feedback_by_id',
                     {
                         feedback_id: feedback1.id
                     },

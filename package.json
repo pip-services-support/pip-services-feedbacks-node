@@ -43,6 +43,7 @@
         "pip-services-data-node": "^2.0.0",
         "pip-services-net-node": "^2.0.0",
         "pip-services-aws-node": "^1.0.0",
+        "pip-services-oss-node": "^1.0.0",
         "pip-clients-attachments-node": "git+ssh://git@github.com:pip-services-content/pip-clients-attachments-node.git"
     },
     "devDependencies": {

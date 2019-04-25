@@ -1,17 +1,17 @@
 let async = require('async');
 
-import { ConfigParams } from 'pip-services-commons-node';
-import { IConfigurable } from 'pip-services-commons-node';
-import { IReferences } from 'pip-services-commons-node';
-import { Descriptor } from 'pip-services-commons-node';
-import { IReferenceable } from 'pip-services-commons-node';
-import { DependencyResolver } from 'pip-services-commons-node';
-import { FilterParams } from 'pip-services-commons-node';
-import { PagingParams } from 'pip-services-commons-node';
-import { DataPage } from 'pip-services-commons-node';
-import { AnyValueMap } from 'pip-services-commons-node';
-import { ICommandable } from 'pip-services-commons-node';
-import { CommandSet } from 'pip-services-commons-node';
+import { ConfigParams } from 'pip-services3-commons-node';
+import { IConfigurable } from 'pip-services3-commons-node';
+import { IReferences } from 'pip-services3-commons-node';
+import { Descriptor } from 'pip-services3-commons-node';
+import { IReferenceable } from 'pip-services3-commons-node';
+import { DependencyResolver } from 'pip-services3-commons-node';
+import { FilterParams } from 'pip-services3-commons-node';
+import { PagingParams } from 'pip-services3-commons-node';
+import { DataPage } from 'pip-services3-commons-node';
+import { AnyValueMap } from 'pip-services3-commons-node';
+import { ICommandable } from 'pip-services3-commons-node';
+import { CommandSet } from 'pip-services3-commons-node';
 import { IAttachmentsClientV1 } from 'pip-clients-attachments-node';
 
 import { PartyReferenceV1 } from '../data/version1/PartyReferenceV1';

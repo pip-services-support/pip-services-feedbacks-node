@@ -1,4 +1,4 @@
-import { IStringIdentifiable } from 'pip-services-commons-node';
+import { IStringIdentifiable } from 'pip-services3-commons-node';
 
 import { PartyReferenceV1 } from './PartyReferenceV1';
 import { AttachmentV1 } from './AttachmentV1';

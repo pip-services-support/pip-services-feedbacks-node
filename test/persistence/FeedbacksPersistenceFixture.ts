@@ -2,9 +2,9 @@ let _ = require
 let async = require('async');
 let assert = require('chai').assert;
 
-import { FilterParams } from 'pip-services-commons-node';
-import { PagingParams } from 'pip-services-commons-node';
-import { AnyValueMap } from 'pip-services-commons-node';
+import { FilterParams } from 'pip-services3-commons-node';
+import { PagingParams } from 'pip-services3-commons-node';
+import { AnyValueMap } from 'pip-services3-commons-node';
 
 import { PartyReferenceV1 } from '../../src/data/version1/PartyReferenceV1';
 import { FeedbackV1 } from '../../src/data/version1/FeedbackV1';

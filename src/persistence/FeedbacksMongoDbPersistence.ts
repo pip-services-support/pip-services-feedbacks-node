@@ -4,19 +4,18 @@ import { FilterParams } from 'pip-services3-commons-node';
 import { PagingParams } from 'pip-services3-commons-node';
 import { DataPage } from 'pip-services3-commons-node';
 import { AnyValueMap } from 'pip-services3-commons-node';
-import { IdentifiableMongoosePersistence } from 'pip-services3-mongoose-node';
+import { IdentifiableMongoDbPersistence } from 'pip-services3-mongodb-node';
 
 import { PartyReferenceV1 } from '../data/version1/PartyReferenceV1';
 import { FeedbackV1 } from '../data/version1/FeedbackV1';
 import { IFeedbacksPersistence } from './IFeedbacksPersistence';
-import { FeedbacksMongooseSchema } from './FeedbacksMongooseSchema';
 
 export class FeedbacksMongoDbPersistence 
-    extends IdentifiableMongoosePersistence<FeedbackV1, string> 
+    extends IdentifiableMongoDbPersistence<FeedbackV1, string> 
     implements IFeedbacksPersistence {
 
     constructor() {
-        super('feedbacks', FeedbacksMongooseSchema());
+        super('feedbacks');
     }
 
     private composeFilter(filter: FilterParams): any {

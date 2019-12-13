@@ -17,11 +17,11 @@ class FeedbacksServiceFactory extends pip_services3_components_node_1.Factory {
         this.registerAsType(FeedbacksServiceFactory.HttpServiceDescriptor, FeedbacksHttpServiceV1_1.FeedbacksHttpServiceV1);
     }
 }
+exports.FeedbacksServiceFactory = FeedbacksServiceFactory;
 FeedbacksServiceFactory.Descriptor = new pip_services3_commons_node_1.Descriptor("pip-services-feedbacks", "factory", "default", "default", "1.0");
 FeedbacksServiceFactory.MemoryPersistenceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-feedbacks", "persistence", "memory", "*", "1.0");
 FeedbacksServiceFactory.FilePersistenceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-feedbacks", "persistence", "file", "*", "1.0");
 FeedbacksServiceFactory.MongoDbPersistenceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-feedbacks", "persistence", "mongodb", "*", "1.0");
 FeedbacksServiceFactory.ControllerDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-feedbacks", "controller", "default", "*", "1.0");
 FeedbacksServiceFactory.HttpServiceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-feedbacks", "service", "http", "*", "1.0");
-exports.FeedbacksServiceFactory = FeedbacksServiceFactory;
 //# sourceMappingURL=FeedbacksServiceFactory.js.map

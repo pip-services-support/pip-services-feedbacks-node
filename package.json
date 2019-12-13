@@ -1,6 +1,6 @@
 {
     "name": "pip-services-feedbacks-node",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "author": "Conceptual Vision Consulting LLC",
     "description": "Users feedback microservice in Node.js",
     "contributors": [
@@ -44,8 +44,8 @@
         "pip-services3-data-node": "^3.0.0",
         "pip-services3-aws-node": "^3.0.0",
         "pip-services3-rpc-node": "^3.0.0",
-        "pip-services3-mongoose-node": "^3.0.0",
-        "pip-clients-attachments-node": "git+ssh://git@github.com:pip-services-content/pip-clients-attachments-node.git"
+        "pip-services3-mongodb-node": "^3.0.0",
+        "pip-clients-attachments-node": "^1.0.1"
     },
     "devDependencies": {
         "@types/node": "*",
@@ -54,10 +54,8 @@
         "@types/chai": "*",
         "@types/mocha": "*",
         "@types/mongodb": "^2.1.38",
-        "@types/mongoose": "^4.7.4",
         "restify": "^4.3.0",
         "chai": "*",
-        "matcha": "*",
         "mocha": "*"
     }
 }
